@@ -45,7 +45,6 @@ def train(
         counter = 0
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
-            print("start")
 
             optimizer.zero_grad()
             outputs = model(images)
