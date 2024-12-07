@@ -18,7 +18,7 @@ def generate_from_prompt(
             image = pipeline(prompt).images[0]
 
         # Save the generated image
-        name = f"{prompt.lower().replace(" ", "_")}_{i}.png"
+        name = f"{prompt.lower().replace(' ', '_')}_{i}.png"
         output_path = os.path.join(output_dir, name)
 
         image.save(output_path)

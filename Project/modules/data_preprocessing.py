@@ -47,13 +47,22 @@ def create_datasets(output_path: str, batch_size: int):
     val_dir = output_path + '/val'
     test_dir = output_path + '/test'
 
+    train_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+      	transforms.RandomHorizontalFlip(p=0.5),
+    	transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+    	transforms.RandomRotation(15),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-    train_dataset = datasets.ImageFolder(root=train_dir, transform=transform)
+    train_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
     val_dataset = datasets.ImageFolder(root=val_dir, transform=transform)
     test_dataset = datasets.ImageFolder(root=test_dir, transform=transform)
 
