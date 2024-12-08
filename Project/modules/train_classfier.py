@@ -5,7 +5,18 @@ import torch.optim as optim
 import torchvision
 import matplotlib.pyplot as plt
 import torch
+import random
+import numpy as np
 # from tqdm.notebook import tqdm
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # If you use multi-GPU
+    torch.backends.cudnn.deterministic = True  # Ensures reproducibility for convolutional layers
+    torch.backends.cudnn.benchmark = False  # Disable optimization for reproducibility
 
 def train(
     train_loader: torch.utils.data.DataLoader,
