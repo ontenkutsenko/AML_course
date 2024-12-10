@@ -144,12 +144,6 @@ class TextualInversionDataset(Dataset):
 
         example["pixel_values"] = torch.from_numpy(image).permute(2, 0, 1)
         return example
-    
-# what_to_teach = "object"
-# placeholder_token = f"<{swapped_dict[worst_class]}>"
-# # initializer_token = swapped_dict[worst_class]
-# initializer_token = "flower"
-# pretrained_model_name_or_path = "stabilityai/stable-diffusion-2"
 
 def initialize_model(pretrained_model_name_or_path, placeholder_token, initializer_token):
     tokenizer = CLIPTokenizer.from_pretrained(
@@ -205,36 +199,6 @@ def initialize_model(pretrained_model_name_or_path, placeholder_token, initializ
 
     return text_encoder, vae, unet, tokenizer, placeholder_token_id
 
-
-# train_dataset = TextualInversionDataset(
-#       data_root=save_path,
-#       tokenizer=tokenizer,
-#       size=vae.sample_size,
-#       placeholder_token=placeholder_token,
-#       repeats=100,
-#       learnable_property=what_to_teach, #Option selected above between object and style
-#       center_crop=False,
-#       set="train",
-# )
-
-
-
-# noise_scheduler = DDPMScheduler.from_config(pretrained_model_name_or_path, subfolder="scheduler")
-
-
-# hyperparameters = {
-#     "learning_rate": 5e-04,
-#     "scale_lr": True,
-#     "max_train_steps": 2000,
-#     "save_steps": 250,
-#     "train_batch_size": 4,
-#     "gradient_accumulation_steps": 1,
-#     "gradient_checkpointing": True,
-#     "mixed_precision": "fp16",
-#     "seed": 42,
-#     "output_dir": "sd-concept-output"
-# }
-# !mkdir -p sd-concept-output
 
 logger = get_logger(__name__)
 
@@ -392,25 +356,7 @@ tokenizer, placeholder_token_id, placeholder_token, pretrained_model_name_or_pat
         pipeline.save_pretrained(output_dir)
         # Also save the newly trained embeddings
         save_path = os.path.join(output_dir, f"learned_embeds.bin")
-        save_progress(text_encoder, placeholder_token_id, accelerator, save_path)
-
-# import accelerate
-
-# accelerate.notebook_launcher(training_function, args=(text_encoder, vae, unet))
-
-# for param in itertools.chain(unet.parameters(), text_encoder.parameters()):
-#   if param.grad is not None:
-#     del param.grad  # free some memory
-#   torch.cuda.empty_cache()
-
-# save_concept_to_public_library = True
-# name_of_your_concept = "sword-lily-flowers102"
-# hf_token_write = ""
-# path_with_images = "textual_inversion_images"
-# placeholder_token = "<flower>"
-# what_to_teach = "object"
-# pretrained_model_name_or_path = "stabilityai/stable-diffusion-2"
-# save_path = "textual_inversion_images"
+        save_progress(text_encoder, placeholder_token_id, accelerator, save_path, placeholder_token)
 
 def save_concept(
         name_of_your_concept:str,
@@ -444,15 +390,20 @@ def save_concept(
     else:
         what_to_teach_article = f"an `{what_to_teach}`"
     readme_text = f'''---
-    license: mit
-    base_model: {pretrained_model_name_or_path}
-    ---
-    ### {name_of_your_concept} on Stable Diffusion
-    This is the `{placeholder_token}` concept taught to Stable Diffusion via Textual Inversion. You can load this concept into the [Stable Conceptualizer](https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_conceptualizer_inference.ipynb) notebook. You can also train your own concepts and load them into the concept libraries using [this notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/sd_textual_inversion_training.ipynb).
+license: mit
+base_model: {pretrained_model_name_or_path}
+tags:
+- stable-diffusion
+- textual-inversion
+library_name: diffusers
+---
+### {name_of_your_concept} on Stable Diffusion
+This is the `{placeholder_token}` concept taught to Stable Diffusion via Textual Inversion. You can load this concept into the [Stable Conceptualizer](https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_conceptualizer_inference.ipynb) notebook. You can also train your own concepts and load them into the concept libraries using [this notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/sd_textual_inversion_training.ipynb).
 
-    Here is the new concept you will be able to use as {what_to_teach_article}:
-    {image_string}
-    '''
+Here is the new concept you will be able to use as {what_to_teach_article}:
+{image_string}
+'''
+
     #Save the readme to a file
     readme_file = open("README.md", "w")
     readme_file.write(readme_text)
