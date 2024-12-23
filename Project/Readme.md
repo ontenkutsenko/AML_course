@@ -25,7 +25,7 @@ We used the [Oxford 102 Flower Dataset](https://www.robots.ox.ac.uk/~vgg/data/fl
 
 Use [Demo](https://colab.research.google.com/drive/1O8DJlM2cDOEWDLV9sLvoHXk4fTeywnxd?usp=sharing) to generate images and compare perfomance
 
-For project details refer to [Project presentation](Project_presentation.pdf)
+For project details refer to [Project presentation](Project_presentation.pdf) and [Report](Report.pdf) 
 
 **Examples from the project:**
 
